@@ -62,6 +62,21 @@ async function render() {
       width: 500,
     }
   );
+  poster.drawTexts(
+    [
+      {
+        text: 'test align center  ',
+        fillStyle: 'red',
+        size: 50,
+      },
+    ],
+    0,
+    500,
+    {
+      align: 'center',
+      width: 750,
+    }
+  );
   img.src = poster.getImageData();
   document.body.appendChild(img);
 }
