@@ -2,7 +2,13 @@
 no-param-reassign
  */
 
+import assign from 'object-assign';
+import dprop from 'dprop';
+
+import { wordWrap } from '../word-wrapper';
+
 import renderText from './lib/render';
+
 import {
   getBlockLength,
   computeAttributeGlyphs,
@@ -11,11 +17,6 @@ import {
   composeBuffer,
   getMaxAttrHeight,
 } from './lib/util';
-
-const assign = require('object-assign');
-
-const wordWrap = require('word-wrapper');
-const dprop = require('dprop');
 
 const baseSettings = {
   baseline: 'alphabetic',
@@ -101,7 +102,7 @@ export default function createStyledText(context, chunks, opts) {
     fonts = data.map((attrib) => attrib.font);
 
     fullText = composeBuffer(data);
-    lines = wordWrap.lines(fullText, {
+    lines = wordWrap(fullText, {
       width: opts.width,
       mode: opts.wordWrap,
       measure,
@@ -115,7 +116,10 @@ export default function createStyledText(context, chunks, opts) {
     }
 
     maxLineWidth = lines.reduce((prev, line) => Math.max(line.width, prev), 0);
-
+    // 居右处理
+    if (opts.width) {
+      maxLineWidth = Math.max(maxLineWidth, opts.width);
+    }
     height = lines.reduce((prev, line) => prev + line.height, 0);
   }
 

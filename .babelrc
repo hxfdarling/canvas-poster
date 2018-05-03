@@ -1,24 +1,6 @@
 {
-  "presets": [
-    [
-      "env",
-      {
-        "useBuiltIns": true,
-        "targets": {
-          "browsers": ["last 2 versions", "ie >= 11"]
-        },
-        "exclude": ["transform-async-to-generator", "transform-regenerator"]
-      }
-    ]
-  ],
-  "plugins": [
-    [
-      "transform-object-rest-spread",
-      {
-        "useBuiltIns": true
-      }
-    ]
-  ],
+  "presets": ["env"],
+  "plugins": ["transform-object-rest-spread", "transform-runtime"],
   "env": {
     "test": {
       "presets": ["env"],

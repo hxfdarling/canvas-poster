@@ -16,3 +16,4 @@ Thumbs.db
 *.sublime-workspace
 yarn.lock
 package-lock.json
+.cache/
