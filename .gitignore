@@ -17,3 +17,4 @@ Thumbs.db
 yarn.lock
 package-lock.json
 .cache/
+demo/
