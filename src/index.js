@@ -1,7 +1,6 @@
 /* eslint-disable
 no-param-reassign
  */
-
 import createStyledText from './canvas-text';
 
 export function testx() {

@@ -25,6 +25,7 @@ async function render() {
       width: 700,
     }
   );
+  poster.drawTexts('test', 100, 100);
   poster.drawTexts(
     [
       {

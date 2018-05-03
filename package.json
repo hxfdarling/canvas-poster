@@ -1,14 +1,14 @@
 {
   "name": "canvas-poster",
   "version": "1.0.0",
-  "description": "",
+  "description": "render text and image to canvas ,then get image data from canvs",
   "license": "MIT",
   "main": "dist/index.js",
   "files": [
     "dist"
   ],
   "scripts": {
-    "dev": "parcel -p 8080 demo.html ",
+    "dev": "parcel --no-cache -p 8080 demo.html ",
     "start": "npm run build -- -w",
     "build": "cross-env NODE_ENV=production babel src -d dist --ignore 'src/**/*.test.js' --copy-files",
     "clean": "del-cli dist",
@@ -67,9 +67,6 @@
   },
   "engines": {
     "node": ">= 6.9.0 || >= 8.9.0"
-  },
-  "peerDependencies": {
-    "webpack": "^3.0.0 || ^4.0.0"
   },
   "pre-commit": "lint-staged",
   "lint-staged": {
