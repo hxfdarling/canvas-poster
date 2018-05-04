@@ -1,16 +1,16 @@
 /* eslint-disable
-no-param-reassign
- */
+no-console
+*/
+
 import createStyledText from './canvas-text';
-import html2canvas from './html2canvas';
-import { PATH } from './html2canvas/lib/drawing/Path';
+
+import { TEXT_DECORATION_LINE } from './lib/parsing/textDecoration';
+
+import { NodeParser } from './lib/NodeParser';
+import { PATH } from './lib/drawing/Path';
 import { loadImage } from './utils';
 
-export function testx() {
-  return 1;
-}
-
-export default class Poster {
+export default class Canvas {
   constructor(options) {
     this.options = Object.assign(
       {
@@ -76,6 +76,12 @@ export default class Poster {
       texts = [texts];
     }
     createStyledText(ctx, texts, options).render(left, top);
+  }
+
+  renderDom(dom) {
+    this.dom = dom;
+    const stack = NodeParser(dom);
+    console.log(stack);
   }
 
   clip(clipPaths, callback = () => {}) {
@@ -174,8 +180,83 @@ export default class Poster {
     this.ctx.fillStyle = color.toString();
     this.ctx.fillRect(x, y, width, height);
   }
+  renderTextNode(textBounds, color, font, textDecoration, textShadows) {
+    this.ctx.font = [
+      font.fontStyle,
+      font.fontVariant,
+      font.fontWeight,
+      font.fontSize,
+      font.fontFamily,
+    ].join(' ');
 
-  drawDom(dom) {
-    html2canvas(this, dom);
+    textBounds.forEach((text) => {
+      this.ctx.fillStyle = color.toString();
+      if (textShadows && text.text.trim().length) {
+        textShadows
+          .slice(0)
+          .reverse()
+          .forEach((textShadow) => {
+            this.ctx.shadowColor = textShadow.color.toString();
+            this.ctx.shadowOffsetX = textShadow.offsetX * this.options.scale;
+            this.ctx.shadowOffsetY = textShadow.offsetY * this.options.scale;
+            this.ctx.shadowBlur = textShadow.blur;
+
+            this.ctx.fillText(
+              text.text,
+              text.bounds.left,
+              text.bounds.top + text.bounds.height
+            );
+          });
+      } else {
+        this.ctx.fillText(
+          text.text,
+          text.bounds.left,
+          text.bounds.top + text.bounds.height
+        );
+      }
+
+      if (textDecoration !== null) {
+        const textDecorationColor = textDecoration.textDecorationColor || color;
+        textDecoration.textDecorationLine.forEach((textDecorationLine) => {
+          switch (textDecorationLine) {
+            case TEXT_DECORATION_LINE.UNDERLINE: {
+              // need to take that into account both in position and size // TODO As some browsers display the line as more than 1px if the font-size is big, // Draws a line at the baseline of the font
+              const { baseline } = this.options.fontMetrics.getMetrics(font);
+              this.rectangle(
+                text.bounds.left,
+                Math.round(text.bounds.top + baseline),
+                text.bounds.width,
+                1,
+                textDecorationColor
+              );
+              break;
+            }
+            case TEXT_DECORATION_LINE.OVERLINE: {
+              this.rectangle(
+                text.bounds.left,
+                Math.round(text.bounds.top),
+                text.bounds.width,
+                1,
+                textDecorationColor
+              );
+              break;
+            }
+            case TEXT_DECORATION_LINE.LINE_THROUGH: {
+              // TODO try and find exact position for line-through
+              const { middle } = this.options.fontMetrics.getMetrics(font);
+              this.rectangle(
+                text.bounds.left,
+                Math.ceil(text.bounds.top + middle),
+                text.bounds.width,
+                1,
+                textDecorationColor
+              );
+              break;
+            }
+            default:
+          }
+        });
+      }
+    });
   }
 }
