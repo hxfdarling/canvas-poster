@@ -2,6 +2,7 @@
 no-param-reassign
  */
 import createStyledText from './canvas-text';
+import html2canvas from './html2canvas';
 
 export function testx() {
   return 1;
@@ -84,5 +85,11 @@ export default class Poster {
       options.width *= scale;
     }
     createStyledText(context, texts, options).render(x * scale, y * scale);
+  }
+  drawDom(dom) {
+    html2canvas(this, dom);
+  }
+  drawHtml(html) {
+    html2canvas(this, html);
   }
 }
