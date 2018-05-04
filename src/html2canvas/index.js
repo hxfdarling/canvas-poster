@@ -8,21 +8,6 @@
  * z-index：static,absolute,relative
  */
 
-async function drawDom(poster, dom) {
+export default async function drawDom(poster, dom) {
   dom.children.forEach(() => {});
-}
-async function drawHtml(poster, html) {
-  const dom = document.createElement('div');
-  dom.innerHTML = html;
-  document.body.appendChild(dom);
-  await drawDom(poster, dom);
-  document.body.removeChild(dom);
-}
-
-export default async function(poster, dom) {
-  if (typeof dom === 'string') {
-    await drawHtml(poster, dom);
-  } else {
-    await drawDom(poster, dom);
-  }
 }
