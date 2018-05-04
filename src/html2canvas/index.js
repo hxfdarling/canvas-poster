@@ -1,3 +1,6 @@
+/* eslint-disable
+no-console
+*/
 /**
  *
  * 需要处理的场景
@@ -7,7 +10,9 @@
  * 圆角
  * z-index：static,absolute,relative
  */
+import { NodeParser } from './lib/NodeParser';
 
-export default async function drawDom(poster, dom) {
-  dom.children.forEach(() => {});
+export default function drawDom(poster, dom) {
+  const stack = NodeParser(dom);
+  console.log(stack);
 }

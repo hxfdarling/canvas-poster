@@ -3,28 +3,13 @@ no-param-reassign
  */
 import createStyledText from './canvas-text';
 import html2canvas from './html2canvas';
-import { PATH } from './drawing/Path';
+import { PATH } from './html2canvas/lib/drawing/Path';
+import { loadImage } from './utils';
 
 export function testx() {
   return 1;
 }
-function loadImg(src) {
-  return new Promise((resolve, reject) => {
-    const img = document.createElement('img');
-    // 在部分老机型上面，无法加载图片
-    if (src.indexOf(';base64,') === -1) {
-      // This enables CORS
-      img.crossOrigin = 'Anonymous';
-    }
-    img.onload = () => {
-      resolve(img);
-    };
-    img.onerror = () => {
-      reject(new Error('image load error'));
-    };
-    img.src = src;
-  });
-}
+
 export default class Poster {
   constructor(options) {
     this.options = Object.assign(
@@ -56,7 +41,7 @@ export default class Poster {
     { left = 0, top = 0, width, height } = { width: '100%' }
   ) {
     const { width: canvasWidth, height: canvasHeight } = this.options;
-    const img = await loadImg(src);
+    const img = await loadImage(src);
 
     if (width === '100%') {
       width = canvasWidth;

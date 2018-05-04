@@ -8,7 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "dev": "parcel --no-cache -p 8080 demo.html -d demo ",
+    "dev": "parcel --no-cache -p 8080  demo_html.html -d demo ",
     "start": "npm run build -- -w",
     "build": "cross-env NODE_ENV=production babel src -d dist --ignore 'src/**/*.test.js' --copy-files",
     "clean": "del-cli dist",
@@ -34,6 +34,7 @@
   "author": "zman <hxfdarling@hotmail.com>",
   "dependencies": {
     "dprop": "^1.0.0",
+    "lodash": "^4.17.10",
     "object-assign": "^4.1.1"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
-export default (zIndex) => {
+export const parseZIndex = (zIndex) => {
   const auto = zIndex === 'auto';
   return {
     auto,
