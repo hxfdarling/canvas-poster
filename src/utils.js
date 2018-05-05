@@ -7,12 +7,19 @@ export function loadImage(src) {
       // This enables CORS
       img.crossOrigin = 'Anonymous';
     }
-    img.onload = () => {
-      resolve(img);
-    };
+    img.onload = () => resolve(img);
+
     img.onerror = () => {
       reject(new Error('image load error'));
     };
     img.src = src;
+    if (img.complete === true) {
+      // Inline XML images may fail to parse, throwing an Error later on
+      setTimeout(() => {
+        resolve(img);
+      }, 500);
+    }
   });
 }
+export const SMALL_IMAGE =
+  'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';

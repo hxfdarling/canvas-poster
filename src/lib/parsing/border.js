@@ -1,5 +1,3 @@
-/* @flow */
-
 import Color from '../Color';
 
 export const BORDER_STYLE = {

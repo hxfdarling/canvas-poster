@@ -36,3 +36,15 @@ async function render(){
 }
 render();
 ```
+
+use dom
+
+```js
+
+import {renderDom} from 'canvas-poster'
+renderDom(dom).then((poster)=>{
+   let img = document.createElement('img');
+  img.src = poster.getImageData();
+})
+
+```

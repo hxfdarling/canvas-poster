@@ -10,6 +10,7 @@ module.exports = {
   },
   extends: ['@webpack-contrib/eslint-config-webpack'],
   rules: {
+    "no-undefined":0,
     "no-param-reassign":0,
     "line-comment-position":0,
     "no-use-before-define":0,

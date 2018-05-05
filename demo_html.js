@@ -1,10 +1,6 @@
-import Poster from './src/index';
+import { renderDom } from './src/index';
 
-const img = document.querySelector('#test');
-const poster = new Poster({
-  width: 750,
-  height: 1224,
+window.renderDom = renderDom;
+renderDom(document.querySelector('#test-dom'), {}).then((poster) => {
+  document.querySelector('#test').src = poster.getImageData();
 });
-poster.drawDom(document.querySelector('#test-dom'));
-img.src = poster.getImageData();
-document.body.appendChild(img);

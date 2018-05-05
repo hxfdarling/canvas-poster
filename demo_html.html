@@ -11,21 +11,62 @@
       padding: 0;
       margin: 0;
     }
-    img {
+
+    #test {
       width: 100%;
+    }
+
+    .font {
+      font-size: 28px;
+      color: #fff;
+    }
+
+    #test-dom {
+      background: #ddd;
+      position: relative;
+    }
+
+    .long-str {
+      width: 100px;
+      word-break: keep-all;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border:2px solid red;
+      text-decoration:underline;
+    }
+    .border{
+      border:2px solid red;
+      border-radius: 10px;
+      padding:10px;
+      margin:10px;
+    }
+    .absolute{
+      position: absolute;
+      z-index: 1;
+      background:red;
+      height:100px;
+      width:100px;
+      bottom:0;
+      right: 0;
+      opacity: 0.5;
     }
   </style>
 </head>
 
 <body>
-  <img id="test" />
+  <h1>dom</h1>
   <div id="test-dom">
-    <span>test</span>
-    test2
-    <div>
+    <div class="absolute"></div>
+    <img src="./test/test.jpg">
+    <span class="font">test</span>
+    <div class="border">
       <span>xxx</span>
     </div>
+    <div class="long-str">long string long string long string long string long string long string </div>
   </div>
+  <h1>image</h1>
+  <img id="test" />
   <script src="./demo_html.js"></script>
 </body>
 

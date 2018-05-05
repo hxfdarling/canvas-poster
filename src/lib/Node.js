@@ -4,7 +4,6 @@ import { parseBackground } from './parsing/background';
 import { parseFont } from './parsing/font';
 import { parseLetterSpacing } from './parsing/letterSpacing';
 import { parseLineBreak } from './parsing/lineBreak';
-import { parseMargin } from './parsing/margin';
 import { parseOverflow, OVERFLOW } from './parsing/overflow';
 import { parseOverflowWrap } from './parsing/overflowWrap';
 import { parsePadding } from './parsing/padding';
@@ -22,7 +21,8 @@ import {
 } from './Bounds';
 
 export default class Node {
-  constructor(node, parent, index) {
+  constructor(node, parent, resourceLoader, index) {
+    this.node = node;
     this.parent = parent;
     this.tagName = node.tagName;
     this.index = index;
@@ -31,9 +31,45 @@ export default class Node {
     if (typeof node.start === 'number') {
       this.listStart = node.start;
     }
+    this.parseStyle();
+
+    // TODO move bound retrieval for all nodes to a later stage?
+    if (node.tagName === 'IMG') {
+      node.addEventListener('load', () => {
+        this.parseBounds();
+      });
+      this.image = resourceLoader.loadImage(node.src);
+    }
+    this.parseBounds();
+
+    if (process.env.NODE_ENV !== 'producation') {
+      this.name = `${node.tagName.toLowerCase()}${
+        node.id ? `#${node.id}` : ''
+      }${node.className
+        .toString()
+        .split(' ')
+        .map((s) => (s.length ? `.${s}` : ''))
+        .join('')}`;
+    }
+  }
+  parseBounds() {
+    const { node } = this;
     const { defaultView } = node.ownerDocument;
-    const scrollX = defaultView.pageXOffset;
-    const scrollY = defaultView.pageYOffset;
+    this.bounds = parseBounds(
+      node,
+      defaultView.pageXOffset,
+      defaultView.pageYOffset
+    );
+    this.curvedBounds = parseBoundCurves(
+      this.bounds,
+      this.style.border,
+      this.style.borderRadius
+    );
+  }
+  parseStyle() {
+    const { node } = this;
+    const { defaultView } = node.ownerDocument;
+
     const style = defaultView.getComputedStyle(node, null);
 
     const position = parsePosition(style.position);
@@ -46,7 +82,7 @@ export default class Node {
       font: parseFont(style),
       letterSpacing: parseLetterSpacing(style.letterSpacing),
       lineBreak: parseLineBreak(style.lineBreak),
-      margin: parseMargin(style),
+      // margin: parseMargin(style),
       opacity: parseFloat(style.opacity),
       overflow: parseOverflow(style.overflow),
       overflowWrap: parseOverflowWrap(
@@ -59,38 +95,9 @@ export default class Node {
       wordBreak: parseWordBreak(style.wordBreak),
       zIndex: parseZIndex(position !== POSITION.STATIC ? style.zIndex : 'auto'),
     };
-
     if (this.isTransformed()) {
       // getBoundingClientRect provides values post-transform, we want them without the transformation
       node.style.transform = 'matrix(1,0,0,1,0,0)';
-    }
-
-    // TODO move bound retrieval for all nodes to a later stage?
-    if (node.tagName === 'IMG') {
-      node.addEventListener('load', () => {
-        this.bounds = parseBounds(node, scrollX, scrollY);
-        this.curvedBounds = parseBoundCurves(
-          this.bounds,
-          this.style.border,
-          this.style.borderRadius
-        );
-      });
-    }
-    this.bounds = parseBounds(node, scrollX, scrollY);
-    this.curvedBounds = parseBoundCurves(
-      this.bounds,
-      this.style.border,
-      this.style.borderRadius
-    );
-
-    if (process.env.NODE_ENV !== 'producation') {
-      this.name = `${node.tagName.toLowerCase()}${
-        node.id ? `#${node.id}` : ''
-      }${node.className
-        .toString()
-        .split(' ')
-        .map((s) => (s.length ? `.${s}` : ''))
-        .join('')}`;
     }
   }
   getClipPaths() {

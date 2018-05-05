@@ -6,12 +6,12 @@ import Node from './Node';
 import Text from './Text';
 
 const TYPE_TEXT = 3;
-export const NodeParser = (node) => {
+export const NodeParser = (node, resourceLoader) => {
   let index = 0;
-  const container = new Node(node, null, index++);
+  const container = new Node(node, null, resourceLoader, index++);
   const stack = new StackingContext(container, null, true);
 
-  parseNodeTree(node, container, stack, index);
+  parseNodeTree(node, container, stack, resourceLoader, index);
 
   return stack;
 };
@@ -24,7 +24,7 @@ const IGNORED_NODE_NAMES = [
   'OPTION',
 ];
 
-const parseNodeTree = (node, parent, stack, index) => {
+const parseNodeTree = (node, parent, stack, resourceLoader, index) => {
   for (
     let childNode = node.firstChild, nextNode;
     childNode;
@@ -37,29 +37,30 @@ const parseNodeTree = (node, parent, stack, index) => {
       }
     } else if (childNode instanceof HTMLElement) {
       if (IGNORED_NODE_NAMES.indexOf(childNode.nodeName) === -1) {
-        const container = new Node(childNode, parent, index++);
+        const container = new Node(childNode, parent, resourceLoader, index++);
         if (container.isVisible()) {
           const treatAsRealStackingContext = createsRealStackingContext(
             container,
             childNode
           );
           if (treatAsRealStackingContext || createsStackingContext(container)) {
-            // for treatAsRealStackingContext:false, any positioned descendants and descendants
-            // which actually create a new stacking context should be considered part of the parent stacking context
-            const parentStack =
-              treatAsRealStackingContext || container.isPositioned()
-                ? stack.getRealParentStackingContext()
-                : stack;
+            const parentStack = stack.getRealParentStackingContext();
             const childStack = new StackingContext(
               container,
               parentStack,
               treatAsRealStackingContext
             );
             parentStack.contexts.push(childStack);
-            parseNodeTree(childNode, container, childStack, index);
+            parseNodeTree(
+              childNode,
+              container,
+              childStack,
+              resourceLoader,
+              index
+            );
           } else {
             stack.children.push(container);
-            parseNodeTree(childNode, container, stack, index);
+            parseNodeTree(childNode, container, stack, resourceLoader, index);
           }
         }
       }
