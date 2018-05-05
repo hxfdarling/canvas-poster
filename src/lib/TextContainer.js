@@ -1,6 +1,6 @@
 import { parseTextBounds } from './TextBounds';
 
-export default class Text {
+export default class TextContainer {
   constructor(text, parent, bounds) {
     this.text = text;
     this.parent = parent;
@@ -8,7 +8,7 @@ export default class Text {
   }
 
   static fromTextNode(node, parent) {
-    return new Text(
+    return new TextContainer(
       node.data,
       parent,
       parseTextBounds(node.data, parent, node)

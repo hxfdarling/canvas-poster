@@ -2,13 +2,13 @@
 no-plusplus */
 
 import StackingContext from './StackingContext';
-import Node from './Node';
-import Text from './Text';
+import NodeContainer from './NodeContainer';
+import TextContainer from './TextContainer';
 
 const TYPE_TEXT = 3;
 export const NodeParser = (node, resourceLoader) => {
   let index = 0;
-  const container = new Node(node, null, resourceLoader, index++);
+  const container = new NodeContainer(node, null, resourceLoader, index++);
   const stack = new StackingContext(container, null, true);
 
   parseNodeTree(node, container, stack, resourceLoader, index);
@@ -33,11 +33,16 @@ const parseNodeTree = (node, parent, stack, resourceLoader, index) => {
     nextNode = childNode.nextSibling;
     if (childNode.nodeType === TYPE_TEXT) {
       if (childNode.data.trim().length > 0) {
-        parent.childNodes.push(Text.fromTextNode(childNode, parent));
+        parent.childNodes.push(TextContainer.fromTextNode(childNode, parent));
       }
     } else if (childNode instanceof HTMLElement) {
       if (IGNORED_NODE_NAMES.indexOf(childNode.nodeName) === -1) {
-        const container = new Node(childNode, parent, resourceLoader, index++);
+        const container = new NodeContainer(
+          childNode,
+          parent,
+          resourceLoader,
+          index++
+        );
         if (container.isVisible()) {
           const treatAsRealStackingContext = createsRealStackingContext(
             container,
@@ -63,9 +68,11 @@ const parseNodeTree = (node, parent, stack, resourceLoader, index) => {
             parseNodeTree(childNode, container, stack, resourceLoader, index);
           }
         }
+      } else {
+        throw new Error(`not support ${childNode.tagName}`);
       }
     } else {
-      throw new Error(`not support ${node.tagName}`);
+      throw new Error(`not support ${childNode.tagName}`);
     }
   }
 };
@@ -81,5 +88,5 @@ const createsStackingContext = (container) => container.isPositioned();
 
 const isBodyWithTransparentRoot = (container, node) =>
   node.nodeName === 'BODY' &&
-  container.parent instanceof Node &&
+  container.parent instanceof NodeContainer &&
   container.parent.style.background.backgroundColor.isTransparent();

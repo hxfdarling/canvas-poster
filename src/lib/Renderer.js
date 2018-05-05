@@ -4,7 +4,7 @@ import {
   calculateContentBox,
   calculatePaddingBoxPath,
 } from './Bounds';
-import Text from './Text';
+import TextContainer from './TextContainer';
 import { BORDER_STYLE } from './parsing/border';
 import { calculateBackgroungPaintingArea } from './parsing/background';
 
@@ -25,7 +25,7 @@ export default class Renderer {
     const callback = () => {
       if (container.childNodes.length) {
         container.childNodes.forEach((child) => {
-          if (child instanceof Text) {
+          if (child instanceof TextContainer) {
             const { style } = child.parent;
             this.poster.renderTextNode(
               child.bounds,

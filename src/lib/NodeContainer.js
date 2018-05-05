@@ -20,7 +20,7 @@ import {
   calculatePaddingBoxPath,
 } from './Bounds';
 
-export default class Node {
+export default class NodeContainer {
   constructor(node, parent, resourceLoader, index) {
     this.node = node;
     this.parent = parent;
