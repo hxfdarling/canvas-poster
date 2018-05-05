@@ -1,4 +1,9 @@
+/* eslint-disable
+default-case,no-bitwise
+*/
 export function loop() {}
+export const contains = (bit, value) => (bit & value) !== 0;
+
 export function loadImage(src) {
   return new Promise((resolve, reject) => {
     const img = document.createElement('img');

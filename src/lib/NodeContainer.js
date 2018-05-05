@@ -1,3 +1,5 @@
+import { contains } from '../utils';
+
 import { parseBorder } from './parsing/border';
 import { parseBorderRadius } from './parsing/borderRadius';
 import { parseBackground } from './parsing/background';
@@ -12,6 +14,8 @@ import { parseTextDecoration } from './parsing/textDecoration';
 import { parseVisibility, VISIBILITY } from './parsing/visibility';
 import { parseWordBreak } from './parsing/word-break';
 import { parseZIndex } from './parsing/zIndex';
+import { parseTransform } from './parsing/transform';
+import { parseDisplay, DISPLAY } from './parsing/display';
 
 import Color from './Color';
 import {
@@ -83,6 +87,8 @@ export default class NodeContainer {
       letterSpacing: parseLetterSpacing(style.letterSpacing),
       lineBreak: parseLineBreak(style.lineBreak),
       // margin: parseMargin(style),
+      transform: parseTransform(style),
+      display: parseDisplay(style.display),
       opacity: parseFloat(style.opacity),
       overflow: parseOverflow(style.overflow),
       overflowWrap: parseOverflowWrap(
@@ -137,5 +143,21 @@ export default class NodeContainer {
   }
   isPositionedWithZIndex() {
     return this.isPositioned() && !this.style.zIndex.auto;
+  }
+  isInlineLevel() {
+    return (
+      contains(this.style.display, DISPLAY.INLINE) ||
+      contains(this.style.display, DISPLAY.INLINE_BLOCK) ||
+      contains(this.style.display, DISPLAY.INLINE_FLEX) ||
+      contains(this.style.display, DISPLAY.INLINE_GRID) ||
+      contains(this.style.display, DISPLAY.INLINE_LIST_ITEM) ||
+      contains(this.style.display, DISPLAY.INLINE_TABLE)
+    );
+  }
+  isInlineBlockOrInlineTable() {
+    return (
+      contains(this.style.display, DISPLAY.INLINE_BLOCK) ||
+      contains(this.style.display, DISPLAY.INLINE_TABLE)
+    );
   }
 }
